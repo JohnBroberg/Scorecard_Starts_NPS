@@ -12,7 +12,7 @@ SELECT 	Candidate_Activity.Requisition_Number, Candidate_Activity.Candidate_Firs
 	Requisition.Req_Category, Requisition.Requisition_Type,
 	
 	--Roster.Name AS Recruiter, Roster.Cost_Center_Name,
-	--IIF (Roster.Manager_Name = "Powell, Bryan", Roster.Name, Roster.Manager_Name) AS Manager,
+	--IIF (Roster.Manager_Name = "#####, #####", Roster.Name, Roster.Manager_Name) AS Manager,
 	Targets.Name AS Recruiter, Roster.Cost_Center_Name,
 	Targets.Manager,
 
@@ -45,7 +45,7 @@ AND Targets.Status = "Active"
 	--Requisition.Req_Category, Requisition.Requisition_Type,
 	--
 	--Roster.Name AS Recruiter, Roster.Cost_Center_Name,
-	--IIF (Roster.Manager_Name = "Powell, Bryan", Roster.Name, Roster.Manager_Name) AS Manager,
+	--IIF (Roster.Manager_Name = "#####, #####", Roster.Name, Roster.Manager_Name) AS Manager,
 	--
 	--Targets.Function AS Alignment, 
 	--Targets.QTR_Target
