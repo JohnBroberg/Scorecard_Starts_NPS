@@ -1,0 +1,61 @@
+--QUERY: Scorecard_Starts_NPS for Recruiter Scorecard report on Tableau; by JBroberg; for #####, #####,; on 20160802
+
+--Candidate_Activity for Starts
+SELECT 	Candidate_Activity.Requisition_Number, Candidate_Activity.Candidate_First_Name + ' ' + Candidate_Activity.Candidate_Last_Name AS Candidate_Full_Name, 
+	Candidate_Activity.Candidate_ref_num, Candidate_Activity.Current_HR_Status, Candidate_Activity.Current_HR_Status_Action_date,
+	Candidate_Activity.Resume_Source_Offer_Form, Candidate_Activity.Candidate_Type, Candidate_Activity.Hire_Reason_Offer_Form, Candidate_Activity.Start_Date,
+	
+	--Cand_HowLikely, InterviewDate, Cand_WhyRating, Cand_HowImprove,
+	
+	Requisition.Job_Code, MID (Requisition.Job_Code, INSTR (Requisition.Job_Code, "_") +1) AS Job_Level,
+	Requisition.Title, Requisition.Full_name_Manager AS Hiring_Manager, Requisition.FPA_Level_1, Requisition.Region, Requisition.Country, 
+	Requisition.Req_Category, Requisition.Requisition_Type,
+	
+	--Roster.Name AS Recruiter, Roster.Cost_Center_Name,
+	--IIF (Roster.Manager_Name = "Powell, Bryan", Roster.Name, Roster.Manager_Name) AS Manager,
+	Targets.Name AS Recruiter, Roster.Cost_Center_Name,
+	Targets.Manager,
+
+	Targets.Function AS Alignment, 
+	Targets.QTR_Target
+	--IIF (Targets.Function IS NULL OR Targets.Function = "", "NOT ASSIGNED", Targets.Function) AS Alignment, 
+	--IIF (Targets.QTR_Target IS NULL OR Targets.QTR_Target = "", "N/A", Targets.QTR_Target) AS QTR_Target
+FROM (((Candidate_Activity INNER JOIN Requisition 
+		ON Candidate_Activity.Requisition_Number = Requisition.Requisition_Number)
+	INNER JOIN Roster
+		ON Requisition.Employee_ID_Recruiter = Roster.VMware_EMC_ID)
+	LEFT JOIN Targets
+		ON Requisition.Employee_ID_Recruiter = Targets.VMW_ID_)
+WHERE Candidate_Activity.Start_Date BETWEEN #01-01-2016# AND #31-12-2016#
+AND (Candidate_Activity.Current_HR_Status = "Hired" OR Candidate_Activity.Current_HR_Status = "Hired-Pending Background")
+AND Roster.Status = "Active"
+AND Targets.Status = "Active"
+
+--UNION
+--
+----NPS
+--SELECT 	NPS.ReqID AS Requisition_Number, Candidate_Full_Name, --NPS.Respondent AS Candidate_Full_Name, <-- Removed to keep respondents confidential, prevent retaliation
+	--Candidate_ref_num, Current_HR_Status, Current_HR_Status_Action_date,
+	--Resume_Source_Offer_Form, Candidate_Type, Hire_Reason_Offer_Form, Start_Date,
+	--
+	--NPS.Cand_HowLikely, NPS.InterviewDate, NPS.Cand_WhyRating, NPS.Cand_HowImprove,
+	--
+	--Requisition.Job_Code, MID (Requisition.Job_Code, INSTR (Requisition.Job_Code, "_") +1) AS Job_Level,
+	--Requisition.Title, Requisition.Full_name_Manager AS Hiring_Manager, Requisition.FPA_Level_1, Requisition.Region, Requisition.Country, 
+	--Requisition.Req_Category, Requisition.Requisition_Type,
+	--
+	--Roster.Name AS Recruiter, Roster.Cost_Center_Name,
+	--IIF (Roster.Manager_Name = "Powell, Bryan", Roster.Name, Roster.Manager_Name) AS Manager,
+	--
+	--Targets.Function AS Alignment, 
+	--Targets.QTR_Target
+--FROM (((NPS INNER JOIN Requisition 
+		--ON NPS.ReqID = Requisition.Requisition_Number)
+	--INNER JOIN Roster
+		--ON Requisition.Employee_ID_Recruiter = Roster.VMware_EMC_ID)
+	--LEFT JOIN Targets
+		--ON Requisition.Employee_ID_Recruiter = Targets.VMW_ID_)
+--WHERE NPS.Cand_HowLikely IS NOT NULL 
+--AND Roster.Status = "Active"
+--AND Targets.Status = "Active"
+;
